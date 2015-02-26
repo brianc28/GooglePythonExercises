@@ -45,24 +45,56 @@ import sys
 # and builds and returns a word/count dict for it.
 # Then print_words() and print_top() can just call the utility function.
 
-###
+# ##
 
 # This basic command line argument parsing code is provided and
 # calls the print_words() and print_top() functions which you must define.
-def main():
-  if len(sys.argv) != 3:
-    print 'usage: ./wordcount.py {--count | --topcount} file'
-    sys.exit(1)
+def print_words(filename):
+    dict = create(filename)
 
-  option = sys.argv[1]
-  filename = sys.argv[2]
-  if option == '--count':
-    print_words(filename)
-  elif option == '--topcount':
-    print_top(filename)
-  else:
-    print 'unknown option: ' + option
-    sys.exit(1)
+    for key in sorted(dict.keys()):
+        print key, dict[key]
+
+
+def print_top(filename):
+    dict = create(filename)
+
+    ordered_dict = sorted(dict, key=dict.get, reverse=True)
+
+    for x in range(0, 20):
+        print ordered_dict[x], dict[ordered_dict[x]]
+
+
+def create(filename):
+    dict = {}
+    f = open(filename)
+    for line in f:
+        l = line.split()
+        for word in l:
+            word = word.lower()
+            if word in dict:
+                dict[word] += 1
+            else:
+                dict[word] = 1
+    f.close()
+    return dict
+
+
+def main():
+    if len(sys.argv) != 3:
+        print 'usage: ./wordcount.py {--count | --topcount} file'
+        sys.exit(1)
+
+    option = sys.argv[1]
+    filename = sys.argv[2]
+    if option == '--count':
+        print_words(filename)
+    elif option == '--topcount':
+        print_top(filename)
+    else:
+        print 'unknown option: ' + option
+        sys.exit(1)
+
 
 if __name__ == '__main__':
-  main()
+    main()
